@@ -1,0 +1,66 @@
+--------------------------
+	After-Action Report
+--------------------------
+1. subset
+
+Desired to verify that each element inside 
+of list 'a' exists within list b. Thus, I utilized 
+List.for_all() and List.mem. I am making sure to cover
+for empty case.
+
+2. equal_sets
+
+From set theory, if a is a subset of b and b is a subset
+of a, then they are equal sets. Utilized subset fn.
+This should hold even when dealing with empty sets.
+
+3. set_union
+
+List.append a b does not do an adequate job of making the
+resultant list to have unique elms. Instead, I check each
+time as I recursively traverse a list.
+
+4. set_intersection
+
+All the elements in a that exist within b is the
+intersection! Use filter to find where they match.
+
+5. set_diff
+
+Simply filter for all elements in a that do not exist
+with list b. Utilize List.filter and List.mem once more.
+
+6. computed_fixed_point
+
+The breaking condition is whenever (f x) satisfies some
+specified predicate (eq). Until that is satisfied, 
+continue to recursive through the function but now passing
+in (f x) as the new input of x.
+
+It will continue on forever if never satisfied.
+
+7. filter_reachable
+
+This one was a journey.
+
+A large chunk of my time was spent on the logic in 
+solving the problem abiding by the spec's rules.
+After, the implementation became arduous as different 
+type errors would arise without any extra info in context
+
+My approach became this:
+
+Begin with start expression, and add all the rules 
+associated with it. Pass these rules into a queue.
+
+While the queue isn't empty, continue to add rules
+to the queue as long as they are nonterminal and 
+are not in our queue or resultant set. The queue will
+become empty as we traverse through with terminal 
+symbols appearing more often.
+
+Lastly, I will have obtained the resultant set of all
+reachable rules. We can now filter each rule within
+the grammar to check if its in the set of reachable 
+rules.
+

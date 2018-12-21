@@ -1,0 +1,79 @@
+--------------------------
+	After-Action Report
+--------------------------
+
+1. convert_grammar
+
+For readibility, I split gram1 into two pieces knowing that
+I would use the first argument as the initial expression, and 
+the remaining grammar rules would be passed into the function
+I would be returning. 
+
+The tricky part was how I added the rules for a given nonterminal
+While traversing through the rules, I wanted to append rules 
+together, but the order was important. I made sure to add the 
+last corresponding rule for a given nonterminal into its given
+rhs, and then recurse back until the corresponding rules were
+complete. To do this, I implemented 
+(snd cur_rule)::(giveRHS sym t)
+
+I tried to create a blind alley, but this function stiil succeeds
+correctly. I cannot forsee any possible weaknesses at this point.
+
+2. parse_prefix
+
+In addition to passing the basic rules, acceptor, and fragment, 
+I thought about what else was necessary. Since we knew that 
+a derivation would slowly be built up as conditions were 
+validated, I also passed an accumulator initialized to [].
+
+Next, after analyzing the example cases, I knew that we had to
+begin traversing through the corresponding rhs of the initial
+first argument of grammar (Expr for example). Thus, I then added
+the symbol's corresponding rhs as an additional argument to 
+matcher.
+
+Initially, I thought this was all I needed.
+
+Now focusing on the matcher, I knew I wanted to traverse through
+the rhs passed to it, to check whether it matches a given 
+prefix in the fragment. If it does match up, we would want to 
+return whatever the accumulator (derivation) has at that point.
+Otherwise, return None.
+
+As to how I would update the accumulator correctly, I had to 
+keep track of which symbol we were focusing on, and no matter
+how I worked at this attempt, I ended up having to create an 
+additional parameter called startSym which would be used within 
+the derivation. I would append the given derivation into a list 
+of the symbol we were focusing on, and the head of the rhs 
+initially given.
+
+To handle all of this, I needed to create another helper function
+called res_of_matching. It would check whether the current rule
+matches the first symbol in the fragment. If it does, then we 
+continue on to the next frag value and now the tail of the rhs.
+
+If the current rule we are looking at within the helper function
+is a nonterminal, we need to update the derivation to include
+the symbol within the fragment. I needed to call the matcher 
+function, with this nonterminal, its corresponding rhs, and etc.
+
+This made me create two recursive functions which called each
+other. Luckily, Ocaml has a keyword "and" which allows me to 
+create both functions at once, getting rid of my errors.
+
+If the acceptor returns none, we backtrack up to the original
+set of rules and try the next rule if possible within the
+tail of the rhs. If we do not obtain some answer from the 
+acceptor we return none.
+
+If we do obtain some answer, we return whatever the acceptor
+returns given the derivation and fragment we have at this point 
+in time. We use the "Some" keyword to obtain the correct types.
+
+Possible Errors:
+
+My current implementation does not protect against blind alleys.
+If one is presented, it will run in an inifinite loop. This is a 
+major weakness which can be improved upon in the future.
